@@ -73,7 +73,7 @@ public class ArraysAndStrings {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(ArraysAndStrings.isUnique("abxggrsqrwfegr"));
-		System.out.println(ArraysAndStrings.isUnique("abcdefghijk"));
+		//System.out.println(ArraysAndStrings.isUnique("abxggrsqrwfegr"));
+		//System.out.println(ArraysAndStrings.isUnique("abcdefghijk"));
 	}
 }
