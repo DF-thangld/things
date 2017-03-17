@@ -33,29 +33,38 @@ public class Problem {
 		Problem problem = new Problem();
 		
 		problem.horizontalLines = horizontalLines;
+		for (int i=0; i<9; i++) {
+			for (int j=0; j<9; j++) {
+				problem.horizontalLines[i].getCell(j).setHorizontalGroup(problem.horizontalLines[i]);
+			}
+		}
 		
 		// initialize vertical lines
 		problem.verticalLines = new ProblemGroup[9];
-		for (int i=0; i<9; i++)
+		for (int i=0; i<9; i++) {
 			for (int j=0; j<9; j++) {
-				int cellNumber = problem.horizontalLines[i].getNumber(j).getCellNumber();
-				problem.verticalLines[j].getNumber(i).setCellNumber(cellNumber);
+				ProblemCell cell = problem.horizontalLines[i].getCell(j);
+				problem.verticalLines[j].setCell(cell, i);
+				problem.verticalLines[j].getCell(i).setVerticalGroup(problem.verticalLines[j]);
 			}
+		}
 		
 		// initialize blocks
 		problem.blocks = new ProblemGroup[9];
-		for (int i=0; i<9; i++)
+		for (int i=0; i<9; i++) {
 			for (int j=0; j<9; j++) {
-				ProblemCell cellNumber = problem.horizontalLines[Math.floorDiv(j, 3) + Math.floorDiv(i, 3)*3].getNumber((i%3)*3 + j - Math.floorDiv(j, 3)*3);
-				problem.blocks[i].getNumbers()[j] = cellNumber;
+				ProblemCell cell = problem.horizontalLines[Math.floorDiv(j, 3) + Math.floorDiv(i, 3)*3].getCell((i%3)*3 + j - Math.floorDiv(j, 3)*3);
+				problem.blocks[i].setCell(cell, j);
+				problem.blocks[i].getCell(j).setBlockGroup(problem.blocks[i]);
 			}
+		}
 		
 		return problem;
 	}
 	
 	/* create Sudoku problem from a file
 	 * File format:
-	 * 1|2|3|4|6|0|4...
+	 * 1234604...
 	 * with "0" or any invalid number means an undiscovered cell
 	*/
 	public static Problem CreateProblem (String filename) throws Exception {
@@ -70,17 +79,15 @@ public class Problem {
 		    isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 		    br = new BufferedReader(isr);
 			while ((line = br.readLine()) != null && lineNumber<9) {
-		        //TODO: read lines and insert it to resource
 				horizontalLines[lineNumber] = new ProblemGroup();
 				lineNumber++;
-				String[] parts = line.split("|");
-				if (parts.length != 9) {
+				if (line.length() != 9) {
 					throw new Exception("Wrong file format, please check the file again");
 				}
 				for (int i=0; i<9; i++) {
 					int cellNumber = 0;
 					try {
-						cellNumber = Integer.parseInt(parts[i]);
+						cellNumber = Integer.parseInt(String.valueOf(line.charAt(i)));
 					}
 					catch (Exception e) {
 						cellNumber = 0;
@@ -90,7 +97,7 @@ public class Problem {
 					}
 					
 					ProblemCell cell = new ProblemCell(cellNumber);
-					horizontalLines[lineNumber].getNumbers()[i] = cell;
+					horizontalLines[lineNumber].setCell(cell, i);
 				}
 		    }
 		}
@@ -111,6 +118,17 @@ public class Problem {
 		
 		//finish reading file into horizontal lines
 		return Problem.CreateProblem(horizontalLines);
+	}
+	
+	// a problem is solved if all horizontal lines are solved (or vertical lines, or blocks)
+	public boolean isSolved() {
+		for (int i=0; i<9; i++) {
+			if (!this.horizontalLines[i].isSolved()) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 }
