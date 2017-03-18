@@ -2,31 +2,31 @@ package sudoku;
 
 import java.util.ArrayList;
 
-class ProblemGroup {
+class Group {
 	
 	// sum of each number in the group (after solved)
 	public static int TOTAL_SUM = 45;
 	
-	private ArrayList<ProblemCell> cells;
+	private ArrayList<Cell> cells;
 	
-	public ArrayList<ProblemCell> getCells() {
+	public ArrayList<Cell> getCells() {
 		return this.cells;
 	}
-	public ProblemCell getCell(int index) throws Exception {
+	public Cell getCell(int index) throws Exception {
 		if (index < 0 || index >= 9) {
 			throw new Exception("Index should be between 0 and 8");
 		}
 		return this.cells.get(index);
 	}
-	public void setCell(ProblemCell cell, int index) {
+	public void setCell(Cell cell, int index) {
 		this.cells.set(index, cell);
 	}
 	
-	public ProblemGroup() throws Exception {
-		this.cells = new ArrayList<ProblemCell>();
+	public Group() throws Exception {
+		this.cells = new ArrayList<Cell>();
 		
 		for (int i=0; i<9; i++) {
-			this.cells.add(new ProblemCell());
+			this.cells.add(new Cell());
 		}
 	}
 	
@@ -58,7 +58,7 @@ class ProblemGroup {
 			}
 			sum += cellNumber;
 		}
-		if (sum != ProblemGroup.TOTAL_SUM) {
+		if (sum != Group.TOTAL_SUM) {
 			return false;
 		}
 		
@@ -96,8 +96,8 @@ class ProblemGroup {
     }
 	
 	//find all combinations of cells which have count of possible numbers equal number of cells 
-	public ArrayList<ArrayList<ProblemCell>> findGroupingCells(int groupSize) throws NumberFormatException, Exception {
-		ArrayList<ArrayList<ProblemCell>> result = new ArrayList<ArrayList<ProblemCell>>();
+	public ArrayList<ArrayList<Cell>> findGroupingCells(int groupSize) throws NumberFormatException, Exception {
+		ArrayList<ArrayList<Cell>> result = new ArrayList<ArrayList<Cell>>();
 		
 		// find all unsolved cells in format of string
 		StringBuilder unsolvedCells = new StringBuilder();
@@ -112,11 +112,11 @@ class ProblemGroup {
 		this.combine(unsolvedCells.toString(), groupSize, 0, combinations);
 		for (String combination: combinations) {
 			StringBuilder possibleNumbers = new StringBuilder();
-			ArrayList<ProblemCell> cells = new ArrayList<ProblemCell>();
+			ArrayList<Cell> cells = new ArrayList<Cell>();
 			for (int i=0; i<groupSize; i++) {
 				int indexOfCellInGroup = Integer.parseInt(combination.substring(i, i+1));
 				// this shouldn't throw exception
-				ProblemCell cell = this.getCell(indexOfCellInGroup);
+				Cell cell = this.getCell(indexOfCellInGroup);
 				String possibleNumber = cell.getPossibleNumbersString(); 
 				possibleNumbers.append(possibleNumber);
 				

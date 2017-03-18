@@ -11,94 +11,95 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 
-public class Problem {
-	private ProblemGroup[] horizontalLines;
-	private ProblemGroup[] verticalLines;
-	private ProblemGroup[] blocks;
+public class Puzzle implements Cloneable {
+	private Group[] horizontalLines;
+	private Group[] verticalLines;
+	private Group[] blocks;
+	private boolean solved = false;
 	
-	public ProblemGroup[] getHorizontalLines() {
+	public Group[] getHorizontalLines() {
 		return horizontalLines;
 	}
-	public ProblemGroup[] getVerticalLines() {
+	public Group[] getVerticalLines() {
 		return verticalLines;
 	}
-	public ProblemGroup[] getBlocks() {
+	public Group[] getBlocks() {
 		return blocks;
 	}
 	
-	protected Problem()  {
+	protected Puzzle()  {
 		
 	}
 	
-	/*public static Problem CreateBlankProblem() throws Exception {
+	public static Puzzle CreateBlankPuzzle() throws Exception {
 		
-		ProblemGroup[] horizontalLines = new ProblemGroup[9];
+		Group[] horizontalLines = new Group[9];
 		for (int i=0; i<9; i++) {
-			horizontalLines[i] = new ProblemGroup();
+			horizontalLines[i] = new Group();
 			for (int j=0; j<9; j++) {
-				ProblemCell cell = new ProblemCell();
+				Cell cell = new Cell();
 				horizontalLines[i].setCell(cell, i);
 			}
 		}
 		
-		return Problem.CreateProblem(horizontalLines);
-	}*/
+		return Puzzle.CreatePuzzle(horizontalLines);
+	}
 	
-	public static Problem CreateProblem(ProblemGroup[] horizontalLines) throws Exception {
+	public static Puzzle CreatePuzzle(Group[] horizontalLines) throws Exception {
 		if (horizontalLines.length != 9) {
 			throw new Exception("The number of horizontal lines must be exactly 9");
 		}
 		
-		Problem problem = new Problem();
+		Puzzle Puzzle = new Puzzle();
 		
-		problem.horizontalLines = horizontalLines;
+		Puzzle.horizontalLines = horizontalLines;
 		for (int i=0; i<9; i++) {
 			for (int j=0; j<9; j++) {
-				problem.horizontalLines[i].getCell(j).setHorizontalGroup(problem.horizontalLines[i]);
+				Puzzle.horizontalLines[i].getCell(j).setHorizontalGroup(Puzzle.horizontalLines[i]);
 			}
 		}
 		
 		// initialize vertical lines
-		problem.verticalLines = new ProblemGroup[9];
+		Puzzle.verticalLines = new Group[9];
 		for (int i=0; i<9; i++) {
 			for (int j=0; j<9; j++) {
-				ProblemCell cell = problem.horizontalLines[i].getCell(j);
-				problem.verticalLines[j].setCell(cell, i);
-				problem.verticalLines[j].getCell(i).setVerticalGroup(problem.verticalLines[j]);
+				Cell cell = Puzzle.horizontalLines[i].getCell(j);
+				Puzzle.verticalLines[j].setCell(cell, i);
+				Puzzle.verticalLines[j].getCell(i).setVerticalGroup(Puzzle.verticalLines[j]);
 			}
 		}
 		
 		// initialize blocks
-		problem.blocks = new ProblemGroup[9];
+		Puzzle.blocks = new Group[9];
 		for (int i=0; i<9; i++) {
 			for (int j=0; j<9; j++) {
-				ProblemCell cell = problem.horizontalLines[Math.floorDiv(j, 3) + Math.floorDiv(i, 3)*3].getCell((i%3)*3 + j - Math.floorDiv(j, 3)*3);
-				problem.blocks[i].setCell(cell, j);
-				problem.blocks[i].getCell(j).setBlockGroup(problem.blocks[i]);
+				Cell cell = Puzzle.horizontalLines[Math.floorDiv(j, 3) + Math.floorDiv(i, 3)*3].getCell((i%3)*3 + j - Math.floorDiv(j, 3)*3);
+				Puzzle.blocks[i].setCell(cell, j);
+				Puzzle.blocks[i].getCell(j).setBlockGroup(Puzzle.blocks[i]);
 			}
 		}
 		
-		return problem;
+		return Puzzle;
 	}
 	
-	/* create Sudoku problem from a file
+	/* create Sudoku Puzzle from a file
 	 * File format:
 	 * 1234604...
 	 * with "0" or any invalid number means an undiscovered cell
 	*/
-	public static Problem CreateProblem (String filename) throws Exception {
+	public static Puzzle CreatePuzzle (String filename) throws Exception {
 		String line;
 		InputStream fis = null;
 		InputStreamReader isr = null;
 		BufferedReader br = null;
-		ProblemGroup[] horizontalLines = new ProblemGroup[9];
+		Group[] horizontalLines = new Group[9];
 		int lineNumber = 0;
 		try {
 		    fis = new FileInputStream(filename);
 		    isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 		    br = new BufferedReader(isr);
 			while ((line = br.readLine()) != null && lineNumber<9) {
-				horizontalLines[lineNumber] = new ProblemGroup();
+				horizontalLines[lineNumber] = new Group();
 				lineNumber++;
 				if (line.length() != 9) {
 					throw new Exception("Wrong file format, please check the file again");
@@ -115,7 +116,7 @@ public class Problem {
 						cellNumber = 0;
 					}
 					
-					ProblemCell cell = new ProblemCell(cellNumber);
+					Cell cell = new Cell(cellNumber);
 					horizontalLines[lineNumber].setCell(cell, i);
 				}
 		    }
@@ -136,17 +137,22 @@ public class Problem {
 		}
 		
 		//finish reading file into horizontal lines
-		return Problem.CreateProblem(horizontalLines);
+		return Puzzle.CreatePuzzle(horizontalLines);
 	}
 	
-	// a problem is solved if all horizontal lines are solved (or vertical lines, or blocks)
+	// a Puzzle is solved if all horizontal lines are solved (or vertical lines, or blocks)
 	public boolean isSolved() {
+		if (this.solved) {
+			return true;
+		}
+		
 		for (int i=0; i<9; i++) {
 			if (!this.horizontalLines[i].isSolved()) {
 				return false;
 			}
 		}
 		
+		this.solved = true;
 		return true;
 	}
 	
@@ -156,8 +162,8 @@ public class Problem {
 	 
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 		
-		for (ProblemGroup group: this.verticalLines) {
-			for (ProblemCell cell: group.getCells()) {
+		for (Group group: this.verticalLines) {
+			for (Cell cell: group.getCells()) {
 				bw.write(cell.getCellNumber());
 			}
 			bw.newLine();
@@ -166,6 +172,28 @@ public class Problem {
 
 	 
 		bw.close();
+	}
+	
+	public Puzzle clone() {
+		Puzzle puzzle = null;
+		try {
+			puzzle = Puzzle.CreateBlankPuzzle();
+			for (int i=0; i<9; i++) {
+				for (int j=0; j<9; j++) {
+					Cell oldCell = this.getHorizontalLines()[i].getCell(j);
+					Cell newCell = puzzle.getHorizontalLines()[i].getCell(j);
+					newCell.setCellNumber(oldCell.getCellNumber());
+					for (int k=0; k<9; k++) {
+						newCell.getPossibleNumbers()[k] = oldCell.getPossibleNumbers()[k];
+					}
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return puzzle;
 	}
 	
 }

@@ -1,14 +1,15 @@
 package sudoku;
 
-public class ProblemCell {
+public class Cell {
 	private int cellNumber = 0;
-	private ProblemGroup horizontalGroup = null;
-	private ProblemGroup verticalGroup = null;
-	private ProblemGroup blockGroup = null;
+	private Group horizontalGroup = null;
+	private Group verticalGroup = null;
+	private Group blockGroup = null;
 	private int positionInHorizontalGroup = 0;
 	private int positionInVerticalGroup = 0;
 	private int positionInBlockGroup = 0;
 	private String id;
+	private boolean solved = false;
 	
 	public String getId() {
 		return id;
@@ -37,27 +38,27 @@ public class ProblemCell {
 		this.positionInBlockGroup = positionInBlockGroup;
 	}
 
-	public ProblemGroup getHorizontalGroup() {
+	public Group getHorizontalGroup() {
 		return horizontalGroup;
 	}
 
-	public void setHorizontalGroup(ProblemGroup horizontalGroup) {
+	public void setHorizontalGroup(Group horizontalGroup) {
 		this.horizontalGroup = horizontalGroup;
 	}
 
-	public ProblemGroup getVerticalGroup() {
+	public Group getVerticalGroup() {
 		return verticalGroup;
 	}
 
-	public void setVerticalGroup(ProblemGroup verticalGroup) {
+	public void setVerticalGroup(Group verticalGroup) {
 		this.verticalGroup = verticalGroup;
 	}
 
-	public ProblemGroup getBlockGroup() {
+	public Group getBlockGroup() {
 		return blockGroup;
 	}
 
-	public void setBlockGroup(ProblemGroup blockGroup) {
+	public void setBlockGroup(Group blockGroup) {
 		this.blockGroup = blockGroup;
 	}
 
@@ -90,7 +91,7 @@ public class ProblemCell {
 		return this.possibleNumbers;
 	}
 	
-	public ProblemCell() throws Exception {
+	public Cell() throws Exception {
 		this.setCellNumber(0);
 		this.id = Utils.generateRandomString(20);
 		for (int i=0; i<9; i++) {
@@ -98,7 +99,7 @@ public class ProblemCell {
 		}
 	}
 	
-	public ProblemCell(int cellNumber) throws Exception {
+	public Cell(int cellNumber) throws Exception {
 		this();
 		if (cellNumber != 0) {
 			this.setCellNumber(cellNumber);
@@ -115,5 +116,18 @@ public class ProblemCell {
 		}
 		
 		return builder.toString();
+	}
+	
+	// check if the cell is solved
+	public boolean isSolved() {
+		if (this.solved) {
+			return this.solved;
+		}
+		
+		if (this.getCellNumber() != 0) {
+			this.solved = true;
+			return this.solved;
+		}
+		return false;
 	}
 }
