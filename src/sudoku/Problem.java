@@ -1,9 +1,15 @@
 package sudoku;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 
 public class Problem {
@@ -129,6 +135,24 @@ public class Problem {
 		}
 		
 		return true;
+	}
+	
+	public void saveToFile(String filename) throws IOException {
+		File fout = new File(filename);
+		FileOutputStream fos = new FileOutputStream(fout);
+	 
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+		
+		for (ProblemGroup group: this.verticalLines) {
+			for (ProblemCell cell: group.getCells()) {
+				bw.write(cell.getCellNumber());
+			}
+			bw.newLine();
+			bw.flush();
+		}
+
+	 
+		bw.close();
 	}
 	
 }

@@ -5,9 +5,38 @@ public class ProblemCell {
 	private ProblemGroup horizontalGroup = null;
 	private ProblemGroup verticalGroup = null;
 	private ProblemGroup blockGroup = null;
+	private int positionInHorizontalGroup = 0;
+	private int positionInVerticalGroup = 0;
+	private int positionInBlockGroup = 0;
+	private String id;
 	
-	
-	
+	public String getId() {
+		return id;
+	}
+	public int getPositionInHorizontalGroup() {
+		return positionInHorizontalGroup;
+	}
+
+	public void setPositionInHorizontalGroup(int positionInHorizontalGroup) {
+		this.positionInHorizontalGroup = positionInHorizontalGroup;
+	}
+
+	public int getPositionInVerticalGroup() {
+		return positionInVerticalGroup;
+	}
+
+	public void setPositionInVerticalGroup(int positionInVerticalGroup) {
+		this.positionInVerticalGroup = positionInVerticalGroup;
+	}
+
+	public int getPositionInBlockGroup() {
+		return positionInBlockGroup;
+	}
+
+	public void setPositionInBlockGroup(int positionInBlockGroup) {
+		this.positionInBlockGroup = positionInBlockGroup;
+	}
+
 	public ProblemGroup getHorizontalGroup() {
 		return horizontalGroup;
 	}
@@ -36,16 +65,18 @@ public class ProblemCell {
 	// Also, remove that number from possible numbers in all cells of its horizontal, vertical and block group
 	public void setCellNumber(int cellNumber) throws Exception {
 		this.cellNumber = cellNumber;
-		for (int i=0; i<9; i++) {
-			this.getPossibleNumbers()[i] = false;
-			if (this.horizontalGroup != null) {
-				this.horizontalGroup.getCell(i).getPossibleNumbers()[cellNumber] = false;
-			}
-			if (this.verticalGroup != null) {
-				this.verticalGroup.getCell(i).getPossibleNumbers()[cellNumber] = false;
-			}
-			if (this.blockGroup != null) {
-				this.blockGroup.getCell(i).getPossibleNumbers()[cellNumber] = false;
+		if (cellNumber != 0) {
+			for (int i=0; i<9; i++) {
+				this.getPossibleNumbers()[i] = false;
+				if (this.horizontalGroup != null) {
+					this.horizontalGroup.getCell(i).getPossibleNumbers()[cellNumber - 1] = false;
+				}
+				if (this.verticalGroup != null) {
+					this.verticalGroup.getCell(i).getPossibleNumbers()[cellNumber - 1] = false;
+				}
+				if (this.blockGroup != null) {
+					this.blockGroup.getCell(i).getPossibleNumbers()[cellNumber - 1] = false;
+				}
 			}
 		}
 	}
@@ -61,6 +92,7 @@ public class ProblemCell {
 	
 	public ProblemCell() throws Exception {
 		this.setCellNumber(0);
+		this.id = Utils.generateRandomString(20);
 		for (int i=0; i<9; i++) {
 			this.possibleNumbers[i] = true;
 		}

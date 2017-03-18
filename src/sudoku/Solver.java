@@ -1,7 +1,8 @@
 package sudoku;
 
+import java.util.ArrayList;
+
 public class Solver {
-	
 	
 	/* Solution (only implement for puzzles that don't need guess work):
 	 * Loop through horizontal, vertical and block groups
@@ -13,9 +14,6 @@ public class Solver {
 	 * 			Assign that number
 	 */
 	public Problem solve(Problem problem) throws Exception {
-		
-		// TODO: should create new cells instead of using old ones
-		Problem result = Problem.CreateProblem(problem.getHorizontalLines());
 		
 		//first loop => assign possible numbers to cell
 		for (int i=0; i<9; i++) {
@@ -29,13 +27,50 @@ public class Solver {
 			}
 		}
 		
-		// keep looping until result found
-		while (!problem.isSolved()) {
-			
-			
-			
+		// add all groups in the problem to a variable
+		ArrayList<ProblemGroup> groups = new ArrayList<ProblemGroup>();
+		for (int i=0; i<9; i++) {
+			groups.add(problem.getVerticalLines()[i]);
+			groups.add(problem.getHorizontalLines()[i]);
+			groups.add(problem.getBlocks()[i]);
 		}
 		
-		return result;
+		// keep looping until result found
+		while (!problem.isSolved()) {
+			// look for 2, 3, 4, 5, 6, 7, 8 cells with combined possible 
+			for (int groupingSize=2; groupingSize<=8; groupingSize++) {
+				for (ProblemGroup group: groups) {
+					ArrayList<ArrayList<ProblemCell>> groupingCells = group.findGroupingCells(groupingSize);
+					for (ArrayList<ProblemCell> cells: groupingCells) {
+						StringBuilder possibleNumbers = new StringBuilder();
+						for (ProblemCell cell: cells) {
+							possibleNumbers.append(cell.getPossibleNumbersString());
+						}
+						
+						String compressedPossibleNumbers = Utils.removeDuplicateCharacterInString(possibleNumbers.toString());
+						for (int i=0; i<9; i++) {
+							ProblemCell cell = group.getCell(i);
+							if (!cells.contains(cell)) {
+								for (char number: compressedPossibleNumbers.toCharArray()) {
+									cell.getPossibleNumbers()[Integer.parseInt(String.valueOf(number))] = false;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			// look for cells with only 1 possible number
+			for (ProblemGroup group: groups) {
+				for (ProblemCell cell: group.getCells()) {
+					String possibleNumbers = cell.getPossibleNumbersString();
+					if (possibleNumbers.length() == 1) {
+						cell.setCellNumber(Integer.parseInt(possibleNumbers));
+					}
+				}
+			}
+		}
+		
+		return problem;
 	}
 }
