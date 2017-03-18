@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +29,20 @@ public class Problem {
 	protected Problem()  {
 		
 	}
+	
+	/*public static Problem CreateBlankProblem() throws Exception {
+		
+		ProblemGroup[] horizontalLines = new ProblemGroup[9];
+		for (int i=0; i<9; i++) {
+			horizontalLines[i] = new ProblemGroup();
+			for (int j=0; j<9; j++) {
+				ProblemCell cell = new ProblemCell();
+				horizontalLines[i].setCell(cell, i);
+			}
+		}
+		
+		return Problem.CreateProblem(horizontalLines);
+	}*/
 	
 	public static Problem CreateProblem(ProblemGroup[] horizontalLines) throws Exception {
 		if (horizontalLines.length != 9) {
