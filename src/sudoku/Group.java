@@ -12,9 +12,9 @@ class Group {
 	public ArrayList<Cell> getCells() {
 		return this.cells;
 	}
-	public Cell getCell(int index) throws Exception {
+	public Cell getCell(int index) {
 		if (index < 0 || index >= 9) {
-			throw new Exception("Index should be between 0 and 8");
+			return null;
 		}
 		return this.cells.get(index);
 	}

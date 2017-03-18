@@ -10,6 +10,7 @@ public class Cell {
 	private int positionInBlockGroup = 0;
 	private String id;
 	private boolean solved = false;
+	private Puzzle puzzle;
 	
 	public String getId() {
 		return id;
@@ -64,7 +65,11 @@ public class Cell {
 
 	// When set a number to the cell, all possible numbers become null
 	// Also, remove that number from possible numbers in all cells of its horizontal, vertical and block group
-	public void setCellNumber(int cellNumber) throws Exception {
+	public boolean setCellNumber(int cellNumber) {
+		if (cellNumber < 0 || cellNumber > 9) {
+			return false;
+		}
+			
 		this.cellNumber = cellNumber;
 		if (cellNumber != 0) {
 			for (int i=0; i<9; i++) {
@@ -80,6 +85,7 @@ public class Cell {
 				}
 			}
 		}
+		return true;
 	}
 	
 	public int getCellNumber() {
@@ -91,7 +97,7 @@ public class Cell {
 		return this.possibleNumbers;
 	}
 	
-	public Cell() throws Exception {
+	public Cell() {
 		this.setCellNumber(0);
 		this.id = Utils.generateRandomString(20);
 		for (int i=0; i<9; i++) {
@@ -99,7 +105,7 @@ public class Cell {
 		}
 	}
 	
-	public Cell(int cellNumber) throws Exception {
+	public Cell(int cellNumber) {
 		this();
 		if (cellNumber != 0) {
 			this.setCellNumber(cellNumber);
@@ -129,5 +135,11 @@ public class Cell {
 			return this.solved;
 		}
 		return false;
+	}
+	public Puzzle getPuzzle() {
+		return puzzle;
+	}
+	public void setPuzzle(Puzzle puzzle) {
+		this.puzzle = puzzle;
 	}
 }

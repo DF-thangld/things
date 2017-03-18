@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 public class Puzzle implements Cloneable {
 	private Group[] horizontalLines;
@@ -25,6 +26,30 @@ public class Puzzle implements Cloneable {
 	}
 	public Group[] getBlocks() {
 		return blocks;
+	}
+	
+	public ArrayList<Cell> getUnsolvedCells() {
+		ArrayList<Cell> result = new ArrayList<Cell>();
+		for (Group group: this.getAllGroups()) {
+			for (Cell cell: group.getCells()) {
+				if (!cell.isSolved()) {
+					result.add(cell);
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	public ArrayList<Group> getAllGroups() {
+		ArrayList<Group> groups = new ArrayList<Group>();
+		for (int i=0; i<9; i++) {
+			groups.add(this.getVerticalLines()[i]);
+			groups.add(this.getHorizontalLines()[i]);
+			groups.add(this.getBlocks()[i]);
+		}
+		
+		return groups;
 	}
 	
 	protected Puzzle()  {
@@ -50,36 +75,42 @@ public class Puzzle implements Cloneable {
 			throw new Exception("The number of horizontal lines must be exactly 9");
 		}
 		
-		Puzzle Puzzle = new Puzzle();
+		Puzzle puzzle = new Puzzle();
 		
-		Puzzle.horizontalLines = horizontalLines;
+		puzzle.horizontalLines = horizontalLines;
 		for (int i=0; i<9; i++) {
 			for (int j=0; j<9; j++) {
-				Puzzle.horizontalLines[i].getCell(j).setHorizontalGroup(Puzzle.horizontalLines[i]);
+				puzzle.horizontalLines[i].getCell(j).setHorizontalGroup(puzzle.horizontalLines[i]);
 			}
 		}
 		
 		// initialize vertical lines
-		Puzzle.verticalLines = new Group[9];
+		puzzle.verticalLines = new Group[9];
 		for (int i=0; i<9; i++) {
 			for (int j=0; j<9; j++) {
-				Cell cell = Puzzle.horizontalLines[i].getCell(j);
-				Puzzle.verticalLines[j].setCell(cell, i);
-				Puzzle.verticalLines[j].getCell(i).setVerticalGroup(Puzzle.verticalLines[j]);
+				Cell cell = puzzle.horizontalLines[i].getCell(j);
+				puzzle.verticalLines[j].setCell(cell, i);
+				puzzle.verticalLines[j].getCell(i).setVerticalGroup(puzzle.verticalLines[j]);
 			}
 		}
 		
 		// initialize blocks
-		Puzzle.blocks = new Group[9];
+		puzzle.blocks = new Group[9];
 		for (int i=0; i<9; i++) {
 			for (int j=0; j<9; j++) {
-				Cell cell = Puzzle.horizontalLines[Math.floorDiv(j, 3) + Math.floorDiv(i, 3)*3].getCell((i%3)*3 + j - Math.floorDiv(j, 3)*3);
-				Puzzle.blocks[i].setCell(cell, j);
-				Puzzle.blocks[i].getCell(j).setBlockGroup(Puzzle.blocks[i]);
+				Cell cell = puzzle.horizontalLines[Math.floorDiv(j, 3) + Math.floorDiv(i, 3)*3].getCell((i%3)*3 + j - Math.floorDiv(j, 3)*3);
+				puzzle.blocks[i].setCell(cell, j);
+				puzzle.blocks[i].getCell(j).setBlockGroup(puzzle.blocks[i]);
 			}
 		}
 		
-		return Puzzle;
+		// assign all cells to the the puzzle
+		for (int i=0; i<9; i++) {
+			for (int j=0; j<9; j++) {
+				puzzle.getHorizontalLines()[i].getCell(j).setPuzzle(puzzle);
+			}
+		}
+		return puzzle;
 	}
 	
 	/* create Sudoku Puzzle from a file
