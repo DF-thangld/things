@@ -1,3 +1,6 @@
 .project
 .classpath
 bin
+build
+nbproject
+/build/
