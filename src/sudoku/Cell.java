@@ -8,7 +8,6 @@ public class Cell {
     private int positionInHorizontalGroup = 0;
     private int positionInVerticalGroup = 0;
     private int positionInBlockGroup = 0;
-    private boolean solved = false;
     private Puzzle puzzle;
 
     public int getPositionInHorizontalGroup() {
