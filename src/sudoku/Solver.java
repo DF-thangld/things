@@ -5,7 +5,9 @@ import java.util.Random;
 
 public class Solver {
 	
-    public static int MAX_LOOP_TIME = 10000;
+	// Higher the number, the better chance to get a puzzle, but some time it doesn't worth it
+    public static int MAX_LOOP_TIME = 1000;
+    private int recursionTime = 0;
 
     /* Solution of a naive puzzle (puzzles don't need guess work):
      * Loop through horizontal, vertical and block groups
@@ -98,6 +100,7 @@ public class Solver {
     }
 
     public Puzzle solve(Puzzle puzzle) throws Exception {
+    	this.recursionTime = 0;
         return this.solve(puzzle, new ArrayList<Puzzle>());
     }
 
@@ -112,11 +115,20 @@ public class Solver {
      */
     protected Puzzle solve(Puzzle problem, ArrayList<Puzzle> states) throws PuzzleUnsolvableException {
 
+    	this.recursionTime++;
         Puzzle result = problem.clone();
-        int loopTime = 0;
 
         while (true) {
 
+        	// loop times more than threshold => declare the puzzle unsolvable
+            boolean solved = result.isSolved();
+            if (!solved && this.recursionTime > Solver.MAX_LOOP_TIME) {
+                throw new PuzzleUnsolvableException("This Sudoku puzzle can not be solved");
+            }
+            else if (solved) {
+                break;
+            }
+        	
             try {
                 result = this.naiveSolve(result);
             } 
@@ -155,15 +167,7 @@ public class Solver {
                 e.printStackTrace();
             }
 
-            // loop times more than threshold => declare the puzzle unsolvable
-            loopTime++;
-            boolean solved = result.isSolved();
-            if (!solved && loopTime > Solver.MAX_LOOP_TIME) {
-                throw new PuzzleUnsolvableException("This Sudoku puzzle can not be solved");
-            }
-            else if (solved) {
-                break;
-            }
+            
         }
 
         return result;

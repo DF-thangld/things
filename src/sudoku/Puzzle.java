@@ -30,9 +30,22 @@ public class Puzzle implements Cloneable {
 
     public ArrayList<Cell> getUnsolvedCells() {
         ArrayList<Cell> result = new ArrayList<Cell>();
-        for (Group group: this.getAllGroups()) {
+        for (Group group: this.getVerticalLines()) {
             for (Cell cell: group.getCells()) {
                 if (!cell.isSolved()) {
+                    result.add(cell);
+                }
+            }
+        }
+
+        return result;
+    }
+    
+    public ArrayList<Cell> getSolvedCells() {
+        ArrayList<Cell> result = new ArrayList<Cell>();
+        for (Group group: this.getVerticalLines()) {
+            for (Cell cell: group.getCells()) {
+                if (cell.isSolved()) {
                     result.add(cell);
                 }
             }
@@ -243,6 +256,22 @@ public class Puzzle implements Cloneable {
             result.append(System.lineSeparator());
         }
         return result.toString();
+    }
+    
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+       if (!(obj instanceof Puzzle))
+            return false;
+        if (obj == this)
+            return true;
+
+        Puzzle rhs = (Puzzle) obj;
+        return (this.toString().equals(rhs.toString()));
     }
 	
 }

@@ -5,13 +5,78 @@ import java.util.Random;
 
 public class Generator {
     
-    public Puzzle generate() throws Exception {
+	/*
+	 * Generate a random suduko solution then create the hardest puzzle from that solution
+	 * Hardest puzzle means the puzzle with least number of solved cells
+	 * Solution: use brute force to get all puzzles from a sudoku solution, then return the hardest puzzle
+	 */
+	public Puzzle generate() throws Exception {
+        Solver solver = new Solver();
+        
+        //Create a random finished Sudoku
+        Puzzle seed = Puzzle.CreateBlankPuzzle();
+        while (!seed.isSolved()) {
+        	try {
+        		seed = solver.solve(seed);
+            }
+        	catch (Exception e) {}
+        }
+        
+        Puzzle result = this.generate(seed);
+        while (result.getSolvedCells().size() > 27) {
+        	result = this.generate(seed);
+        }
+        
+        return result;
+    }
+	
+	public Puzzle generate (Puzzle seed) throws Exception {
+		Puzzle result = seed.clone();
+		Random random = new Random();
+		Solver solver = new Solver();
+		ArrayList<Cell> solvedCells = result.getSolvedCells();
+		
+		while (true) {
+            // remove random number from puzzle until it cannot be solved by naive algorithm anymore
+            int randomCellIndex = random.nextInt(solvedCells.size());
+            Cell randomCell = solvedCells.get(randomCellIndex);
+            int cellNumber = randomCell.getCellNumber();
+            randomCell.setCellNumber(0);
+            
+            for (Cell cell: result.getUnsolvedCells()) {
+            	for (int i=0; i<9; i++) {
+            		cell.getPossibleNumbers()[i] = true;
+            	}
+            }
+            
+            try {
+                solver.naiveSolve(result);
+            }
+            catch (NotANaivePuzzleException | PuzzleUnsolvableException e) {
+                randomCell.setCellNumber(cellNumber);
+                break;
+            }
+        }
+        
+        return result;
+	}
+    
+	
+	/*
+	 * Generate the first puzzle from a random sudoku solution
+	 */
+	/*public Puzzle generate() throws Exception {
         Solver solver = new Solver();
         Random random = new Random();
         
         //Create a random finished Sudoku
         Puzzle result = Puzzle.CreateBlankPuzzle();
-        result = solver.solve(result);
+        while (!result.isSolved()) {
+        	try {
+                result = solver.solve(result);
+            }
+        	catch (Exception e) {}
+        }
         
         ArrayList<Cell> solvedCells = new ArrayList<Cell>();
         for (int i=0; i<9; i++) {
@@ -27,15 +92,10 @@ public class Generator {
             int cellNumber = randomCell.getCellNumber();
             randomCell.setCellNumber(0);
             
-            for (int i=0; i<9; i++) {
-                for (int j=0; j<9; j++) {
-                    Cell cell = result.getHorizontalLines()[i].getCell(j);
-                    if (!cell.isSolved()) {
-                        for (int k=0; k<9; k++) {
-                            cell.getPossibleNumbers()[k] = true;
-                        }
-                    }
-                }
+            for (Cell cell: result.getUnsolvedCells()) {
+            	for (int i=0; i<9; i++) {
+            		cell.getPossibleNumbers()[i] = true;
+            	}
             }
             
             try {
@@ -49,53 +109,5 @@ public class Generator {
         
         return result;
         
-    }
-    
-    protected Puzzle generate(Puzzle seed, ArrayList<Puzzle> states) throws Exception {
-        
-        Solver solver = new Solver();
-        Random random = new Random();
-        
-        ArrayList<Cell> solvedCells = new ArrayList<Cell>();
-        for (int i=0; i<9; i++) {
-            for (int j=0; j<9; j++) {
-                solvedCells.add(seed.getVerticalLines()[i].getCell(j));
-            }
-        }
-        
-        while (true) {
-            // remove random number from puzzle until it cannot be solved by naive algorithm anymore
-            int randomCellIndex = random.nextInt(solvedCells.size());
-            Cell randomCell = solvedCells.get(randomCellIndex);
-            randomCell.setCellNumber(0);
-            
-            for (int i=0; i<9; i++) {
-                for (int j=0; j<9; j++) {
-                    Cell cell = seed.getHorizontalLines()[i].getCell(j);
-                    if (!cell.isSolved()) {
-                        for (int k=0; k<9; k++) {
-                            cell.getPossibleNumbers()[k] = true;
-                        }
-                    }
-                }
-            }
-            
-            states.add(seed.clone());
-            try {
-                solver.naiveSolve(seed);
-            }
-            catch (NotANaivePuzzleException | PuzzleUnsolvableException exc) {
-                System.out.println(seed.toString());
-                Puzzle lastState = states.remove(states.size() - 1);
-                if (states.size() == 0) {
-                    return lastState;
-                }
-                else {
-                    return this.generate(lastState, states);
-                }
-            }
-        }
-        
-        
-    }
+    }*/
 }

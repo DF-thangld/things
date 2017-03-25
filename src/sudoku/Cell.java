@@ -8,13 +8,9 @@ public class Cell {
     private int positionInHorizontalGroup = 0;
     private int positionInVerticalGroup = 0;
     private int positionInBlockGroup = 0;
-    private String id;
     private boolean solved = false;
     private Puzzle puzzle;
 
-    public String getId() {
-        return id;
-    }
     public int getPositionInHorizontalGroup() {
         return positionInHorizontalGroup;
     }
@@ -99,7 +95,6 @@ public class Cell {
 
     public Cell() {
         this.setCellNumber(0);
-        this.id = Utils.generateRandomString(20);
         for (int i=0; i<9; i++) {
             this.possibleNumbers[i] = true;
         }

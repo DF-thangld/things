@@ -89,13 +89,7 @@ class Group {
             	result.add(output.toString());
             }
             if ( i < stringToSearch.length() ) {
-                try {
-                    this.combine(stringToSearch, lengthToFind, i + 1, result);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-            	
+            	this.combine(stringToSearch, lengthToFind, i + 1, result);
             }
             output.setLength( output.length() - 1 );
         }
