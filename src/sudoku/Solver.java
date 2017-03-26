@@ -22,9 +22,8 @@ public class Solver {
         
         problem = problem.clone();
         //first loop => assign possible numbers to cell
-        for (int i=0; i<9; i++) {
-            for (int j=0; j<9; j++) {
-                Cell cell = problem.getHorizontalLines()[i].getCell(j);
+        for (Group group: problem.getVerticalLines()) {
+            for (Cell cell: group.getCells()) {
                 if (cell.getCellNumber() != 0) {
                     cell.getHorizontalGroup().removePossibleNumber(cell.getCellNumber());
                     cell.getVerticalGroup().removePossibleNumber(cell.getCellNumber());
@@ -40,12 +39,14 @@ public class Solver {
         while (true) {
             //check if anything has been done during a solve loop;
             boolean doSomething = false;
-            // look for 2, 3, 4, 5, 6, 7, 8 cells with combined possible 
-            for (int groupingSize=2; groupingSize<=8; groupingSize++) {
-                for (Group group: groups) {
-                    if (group.isSolved()) {
-                        continue;
-                    }
+            
+            for (Group group: groups) {
+                if (group.isSolved()) {
+                    continue;
+                }
+                
+                // look for 2, 3, 4, 5, 6, 7, 8 cells with combined possible 
+                for (int groupingSize=2; groupingSize<=8; groupingSize++) {
                     ArrayList<ArrayList<Cell>> groupingCells = group.findGroupingCells(groupingSize);
                     for (ArrayList<Cell> cells: groupingCells) {
                         StringBuilder possibleNumbers = new StringBuilder();
@@ -67,13 +68,8 @@ public class Solver {
                         }
                     }
                 }
-            }
-
-            // look for cells with only 1 possible number
-            for (Group group: groups) {
-                if (group.isSolved()) {
-                    continue;
-                }
+                
+                // look for cells with only 1 possible number
                 for (Cell cell: group.getCells()) {
                     String possibleNumbers = cell.getPossibleNumbersString();
                     if (!cell.isSolved() && possibleNumbers.length() == 1) {
@@ -133,6 +129,11 @@ public class Solver {
                 result = this.naiveSolve(result);
             } 
             catch (PuzzleUnsolvableException e) {
+            	// check if there is no state left => puzzle unsolvable
+            	if (states.size() == 0) {
+            		throw new PuzzleUnsolvableException("Invalid Sudoku puzzle");
+            	}
+            	
                 // cannot assign cell => go back 1 state
                 Puzzle lastState = states.remove(states.size() - 1);
                 return this.solve(lastState, states);
@@ -140,7 +141,7 @@ public class Solver {
             catch (NotANaivePuzzleException e) { // this puzzle is not naive => need guess work
                 Random random = new Random();
 
-                // choose a random cell
+                // choose a random unsolved cell
                 ArrayList<Cell> unsolvedCells = result.getUnsolvedCells();
                 Cell randomCell = unsolvedCells.get(random.nextInt(unsolvedCells.size() - 1));
 
@@ -155,15 +156,17 @@ public class Solver {
                     return this.solve(result, states);
                 }
                 else {
+                	// check if there is no state left => puzzle unsolvable
+                	if (states.size() == 0) {
+                		throw new PuzzleUnsolvableException("Invalid Sudoku puzzle");
+                	}
+                	
                     Puzzle lastState = states.remove(states.size() - 1);
                     return this.solve(lastState, states);
                 }
                 
-                
-
             }
             catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
