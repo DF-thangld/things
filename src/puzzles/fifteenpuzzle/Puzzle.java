@@ -98,6 +98,7 @@ public class Puzzle implements Cloneable {
 		return result;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		for (int i=0; i<4; i++) {
@@ -114,4 +115,31 @@ public class Puzzle implements Cloneable {
 		
 		return result.toString();
 	}
+	
+	@Override
+    public int hashCode() {
+        return this.toString().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+       if (!(obj instanceof Puzzle))
+            return false;
+        if (obj == this)
+            return true;
+
+        Puzzle rhs = (Puzzle) obj;
+        return (this.toString().equals(rhs.toString()));
+    }
+    
+    public Puzzle clone() {
+        Puzzle puzzle = new Puzzle();
+        for (int i=0; i<4; i++) {
+        	for (int j=0; j<4; j++) {
+        		puzzle.matrix[i][j] = this.matrix[i][j];
+            }
+        }
+
+        return puzzle;
+    }
 }
