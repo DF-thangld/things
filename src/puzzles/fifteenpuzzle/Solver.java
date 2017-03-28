@@ -11,7 +11,7 @@ public class Solver {
 	public ArrayList<Direction> solve(Puzzle puzzle, SolveStrategy strategy) {
 		ArrayList<Direction> result = new ArrayList<Direction>();
 		
-		if (strategy == SolveStrategy.DepthFirst) {
+		if (strategy == SolveStrategy.DepthFirst) { 
 			return solveUsingDepthFirstSearch(puzzle);
 		}
 		return result;
