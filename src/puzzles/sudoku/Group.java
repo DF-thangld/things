@@ -1,6 +1,8 @@
-package sudoku;
+package puzzles.sudoku;
 
 import java.util.ArrayList;
+
+import puzzles.Utils;
 
 class Group {
 	

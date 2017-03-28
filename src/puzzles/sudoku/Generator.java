@@ -1,4 +1,4 @@
-package sudoku;
+package puzzles.sudoku;
 
 import java.util.ArrayList;
 import java.util.Random;

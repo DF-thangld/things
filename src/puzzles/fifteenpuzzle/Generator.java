@@ -1,4 +1,4 @@
-package fifteenpuzzle;
+package puzzles.fifteenpuzzle;
 
 public class Generator {
 	public Puzzle generate() {

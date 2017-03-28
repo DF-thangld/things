@@ -1,4 +1,4 @@
-package sudoku;
+package puzzles.sudoku;
 
 public class NotANaivePuzzleException extends Exception {
 

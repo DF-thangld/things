@@ -1,4 +1,4 @@
-package sudoku;
+package puzzles.sudoku;
 
 public class Cell {
     private int cellNumber = 0;

@@ -1,7 +1,9 @@
-package sudoku;
+package puzzles.sudoku;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import puzzles.Utils;
 
 public class Solver {
 	

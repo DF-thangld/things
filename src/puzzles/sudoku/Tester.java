@@ -1,4 +1,4 @@
-package sudoku;
+package puzzles.sudoku;
 
 public class Tester {
     public static void main(String args[]) throws Exception {
