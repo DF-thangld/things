@@ -4,3 +4,5 @@ bin
 build
 nbproject
 /build/
+things.iml
+.idea/*
